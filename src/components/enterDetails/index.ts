@@ -1,1 +1,1 @@
-export * from './EnterDetails'
+export * from './EnterDetails.tsx';

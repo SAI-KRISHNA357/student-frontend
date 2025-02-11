@@ -1,2 +1,1 @@
-import {ViewDetails} from './ViewValues';
-export {ViewDetails};
+export * from './ViewValues.tsx';
