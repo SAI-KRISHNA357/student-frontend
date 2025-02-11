@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Paper, TextField, Typography, Grid, Alert } from '@mui/material';
 import { Stack } from '@mui/system';
 
@@ -6,11 +6,11 @@ import { usePostStudentDetailsMutation } from '../../services/usePostStundentDet
 import { useCommon } from '../common/useCommon.ts';
 import { EnterDetailsProps } from '../types/types.ts';
 
-
 export const EnterDetails = (config: EnterDetailsProps) => {
-  const {name, age, className, mobile, setName, setAge, setClassName, setMobile} = useCommon();
-  const {setTab, setRefetch} = config;
+  const { name, age, className, mobile, setName, setAge, setClassName, setMobile } = useCommon();
+  const { setTab, setRefetch } = config;
   const [alert, setAlert] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(3);
   const [postStudentDetails] = usePostStudentDetailsMutation();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -19,25 +19,33 @@ export const EnterDetails = (config: EnterDetailsProps) => {
     const data = { name, age, className, mobile };
 
     try {
-        await postStudentDetails(data).unwrap();
-      }
-     catch (error) {
+      await postStudentDetails(data);
+    } catch (error) {
       console.error('Error:', error);
     }
+
     setAlert(true);
     handleReset();
-    setTimeout(() => {
-      setAlert(false);
-      setTab(1);
-      setRefetch(true);
-    }, 3000);
+
+    const interval = setInterval(() => {
+      setRemainingTime((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(interval);
+          setAlert(false);
+          setTab(1);
+          setRefetch(true);
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
   };
 
   const handleReset = () => {
     setName('');
-    setAge(undefined);
+    setAge('');
     setClassName('');
-    setMobile(undefined);
+    setMobile('');
   };
 
   return (
@@ -45,13 +53,18 @@ export const EnterDetails = (config: EnterDetailsProps) => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      // borderRadius: 1,
-      // boxShadow: 3,
       gap: 1
     }}>
-      {alert && <Alert severity="success">Data added successfully</Alert>}
+      {alert && (
+        <Box>
+          <Alert severity="success">Data added successfully</Alert>
+          <Typography variant="body2" sx={{ textAlign: 'center' }}>
+            Switching to view details tab in {remainingTime} seconds...
+          </Typography>
+        </Box>
+      )}
       <Paper sx={{ px: 2, py: 1, width: 500 }}>
-        <Typography variant="h5" component="h1" sx={{ textAlign:'center'}} gutterBottom>
+        <Typography variant="h5" component="h1" sx={{ textAlign: 'center' }} gutterBottom>
           Enter Details
         </Typography>
         <form onSubmit={handleSubmit}>
@@ -70,7 +83,7 @@ export const EnterDetails = (config: EnterDetailsProps) => {
               variant="outlined"
               fullWidth
               value={age}
-              onChange={(e) => setAge(Number(e.target.value))}
+              onChange={(e) => setAge(e.target.value)}
               required
             />
 
@@ -87,7 +100,7 @@ export const EnterDetails = (config: EnterDetailsProps) => {
               variant="outlined"
               fullWidth
               value={mobile}
-              onChange={(e) => setMobile(Number(e.target.value))}
+              onChange={(e) => setMobile(e.target.value)}
               required
             />
 

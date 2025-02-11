@@ -19,6 +19,10 @@ export const EditDetails = ({ open, onClose, details, onSave, refetch }: EditDet
   },[details]);
 
   const handleSave = async () => {
+    if (!name || !age || !className || !mobile) {
+      setErrorMessage('All fields are required');
+      return;
+    }
     const updatedDetails = { name, age, className, mobile, id: details.id };
     try {
       await updateStudentDetails(updatedDetails)
@@ -33,44 +37,50 @@ export const EditDetails = ({ open, onClose, details, onSave, refetch }: EditDet
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Details</DialogTitle>
-      {errorMessage && <Box sx={{ color: 'red', textAlign: 'center', padding: 2 }}>{errorMessage}</Box>}
+      <DialogTitle sx={{textAlign:'center'}}>Edit Details</DialogTitle>
+      {errorMessage && <Box sx={{ color: 'red', textAlign: 'center' }}>{errorMessage}</Box>}
       <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column',  allignItems: 'center', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column',  allignItems: 'center', gap:2 }}>
+        <form>
           <TextField
             variant="outlined"
             fullWidth
-            value={name || details.name}
+            value={name}
             placeholder='Enter name'
             onChange={(e) => setName(e.target.value)}
             required
+            sx={{marginBottom: 2}}
           />
           <TextField
             variant="outlined"
             fullWidth
-            value={age || details.age}
+            value={age}
             placeholder='Enter age'
-            onChange={(e) => setAge(Number(e.target.value))}
+            onChange={(e) => setAge(e.target.value)}
             required
+            sx={{marginBottom: 2}}
           />
           <TextField
             label="Class"
             variant="outlined"
             fullWidth
-            value={className || details.className}
+            value={className}
             placeholder='Enter class'
             onChange={(e) => setClassName(e.target.value)}
             required
+            sx={{marginBottom: 2}}
           />
           <TextField
             label="Phone Number"
             variant="outlined"
             fullWidth
             placeholder='Enter phone number'
-            value={mobile || details.mobile}
-            onChange={(e) => setMobile(Number(e.target.value))}
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
             required
+            sx={{marginBottom: 2}}
           />
+          </form>
         </Box>
       
       </DialogContent>

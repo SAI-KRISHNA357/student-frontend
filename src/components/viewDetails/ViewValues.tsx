@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, Grid, IconButton, TextField, Tooltip } from '@mui/material';
-import { EditDetails } from './EditDetails.tsx';
+import { EditDetails } from './../editDetails/EditDetails.tsx';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import { useGetStudentDetailsQuery } from '../../services/useGetStudentDetails.ts';
 import { useDeleteStudentDetailMutation } from '../../services/useDeleteStudentDetail.ts';
 import { ViewDetailsProps } from '../types/types.ts';
@@ -79,6 +80,9 @@ export const ViewDetails = ({ refetchValue, setRefetch }: ViewDetailsProps) => {
           onChange={handleSearchChange}
           placeholder="Enter name to search"
           type="search"
+          InputProps={{
+            startAdornment: <IconButton disabled><SearchIcon /></IconButton>,
+          }}
         />
       </Box>
       {isError && <Typography color="error">Error fetching data</Typography>}

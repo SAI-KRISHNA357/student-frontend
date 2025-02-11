@@ -14,10 +14,10 @@ export interface EditDetailsProps {
   details: {
     id: number;
     name: string;
-    age: number | undefined;
+    age: string;
     className: string;
-    mobile: number | undefined;
+    mobile: string;
   };
-  onSave: (updatedDetails: { name: string; age: number|undefined; className: string; mobile: number|undefined }) => void;
+  onSave: (updatedDetails: { name: string; age: string; className: string; mobile: string }) => void;
   refetch: () => void;
 }
