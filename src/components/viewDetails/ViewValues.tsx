@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Grid, IconButton, TextField, Tooltip } from '@mui/material';
+import { Box, Typography, CircularProgress, Grid, IconButton, TextField, Tooltip, Paper } from '@mui/material';
 import { EditDetails } from './../editDetails/EditDetails.tsx';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -60,7 +60,7 @@ export const ViewDetails = ({ refetchValue, setRefetch }: ViewDetailsProps) => {
     refetchValue ? refetch() : setRefetch(true);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   };
 
@@ -94,13 +94,14 @@ export const ViewDetails = ({ refetchValue, setRefetch }: ViewDetailsProps) => {
               <Typography variant="h6" sx={{ flex: '1 1 50px', textAlign: 'center' }}>Age</Typography>
               <Typography variant="h6" sx={{ flex: '1 1 100px' }}>Class</Typography>
               <Typography variant="h6" sx={{ flex: '1 1 150px' }}>Mobile</Typography>
-              <Typography variant="h6" sx={{ flex: '0 0 50px' }}>Edit</Typography>
+              <Typography variant="h6" sx={{ flex: '0 0 100px' }}>Edit</Typography>
               <Typography variant="h6" sx={{ flex: '0 0 50px' }}>Delete</Typography>
             </Box>
           </Grid >
           {filteredData.map((record, index) => (
             <Grid item xs={12} key={index}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 2, borderRadius: 2, border: '1px solid grey', gap: 1 }}>
+                <Paper>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 2, gap: 1 }}>
                 <Tooltip title={record.name}>
                   <Typography
                     sx={{
@@ -115,19 +116,20 @@ export const ViewDetails = ({ refetchValue, setRefetch }: ViewDetailsProps) => {
                 </Tooltip>
                 <Typography sx={{ flex: '1 1 50px', textAlign: 'center' }}>{record.age}</Typography>
                 <Typography sx={{ flex: '1 1 100px' }}>{record.className}</Typography>
-                <Typography sx={{ flex: '1 1 150px' }}>{record.mobile}</Typography>
-                <IconButton sx={{ flex: '0 0 50px' }} onClick={() => handleEditClick(record)}>
+                <Typography sx={{ flex: '1 1 70px' }}>{record.mobile}</Typography>
+                <IconButton color='primary' sx={{ flex: '0 0 200px' }} onClick={() => handleEditClick(record)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton sx={{ flex: '0 0 50px' }} onClick={() => handleDelete(record.id)}>
+                <IconButton color='error' sx={{ flex: '0 0 50px' }} onClick={() => handleDelete(record.id)}>
                   <DeleteIcon />
                 </IconButton>
               </Box>
+              </Paper>
             </Grid>
           ))}
         </Grid>
       ) : (
-        <Typography>No details available</Typography>
+        <Typography>No student details available</Typography>
       )}
       {selectedDetails && (
         <EditDetails

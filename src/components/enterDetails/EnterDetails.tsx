@@ -5,13 +5,13 @@ import { Stack } from '@mui/system';
 import { usePostStudentDetailsMutation } from '../../services/usePostStundentDetails.ts';
 import { useCommon } from '../common/useCommon.ts';
 import { EnterDetailsProps } from '../types/types.ts';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export const EnterDetails = (config: EnterDetailsProps) => {
   const { name, age, className, mobile, setName, setAge, setClassName, setMobile } = useCommon();
   const { setTab, setRefetch } = config;
-  const [alert, setAlert] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(3);
   const [postStudentDetails] = usePostStudentDetailsMutation();
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -19,26 +19,19 @@ export const EnterDetails = (config: EnterDetailsProps) => {
     const data = { name, age, className, mobile };
 
     try {
-      await postStudentDetails(data);
+      const response = await postStudentDetails(data);
+      if (response?.data?.status === 201)  {
+        setErrorMessage('');
+        setTab(1);
+        setRefetch(true);
+      } else{
+        const error = response?.error as FetchBaseQueryError;
+        setErrorMessage((error?.data as { message: string })?.message || 'Error adding data');
+      }
     } catch (error) {
-      console.error('Error:', error);
+      setErrorMessage(error.data?.message || 'Error adding data');
     }
-
-    setAlert(true);
     handleReset();
-
-    const interval = setInterval(() => {
-      setRemainingTime((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(interval);
-          setAlert(false);
-          setTab(1);
-          setRefetch(true);
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
   };
 
   const handleReset = () => {
@@ -55,13 +48,8 @@ export const EnterDetails = (config: EnterDetailsProps) => {
       alignItems: 'center',
       gap: 1
     }}>
-      {alert && (
-        <Box>
-          <Alert severity="success">Data added successfully</Alert>
-          <Typography variant="body2" sx={{ textAlign: 'center' }}>
-            Switching to view details tab in {remainingTime} seconds...
-          </Typography>
-        </Box>
+      {errorMessage && (
+        <Alert severity="error">{errorMessage}</Alert>
       )}
       <Paper sx={{ px: 2, py: 1, width: 500 }}>
         <Typography variant="h5" component="h1" sx={{ textAlign: 'center' }} gutterBottom>
@@ -104,8 +92,7 @@ export const EnterDetails = (config: EnterDetailsProps) => {
               required
             />
 
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
+<Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -114,8 +101,7 @@ export const EnterDetails = (config: EnterDetailsProps) => {
                 >
                   Add
                 </Button>
-              </Grid>
-              <Grid item xs={6}>
+              
                 <Button
                   type="reset"
                   variant="outlined"
@@ -125,8 +111,7 @@ export const EnterDetails = (config: EnterDetailsProps) => {
                 >
                   Reset
                 </Button>
-              </Grid>
-            </Grid>
+             </Box>
           </Stack>
         </form>
       </Paper>
